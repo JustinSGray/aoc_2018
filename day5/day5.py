@@ -1,5 +1,7 @@
 import string
 
+from numba import jit, int64
+
 alphabet = string.ascii_lowercase
 
 
@@ -7,11 +9,13 @@ with open('input.txt') as f:
     data = [ord(letter) for letter in f.read()]
 
 
+@jit
 def react(data, remove=None):
     i = 1
     N_P = len(data)
 
-    data = list(data)
+    ord_remove_lower = 0
+    ord_remove_upper = 0
 
     if remove is not None:
         ord_remove_lower = ord(remove.lower())
@@ -66,9 +70,10 @@ smallest_letter = None
 smallest_len = 1e100
 
 for letter in alphabet:
-    size = react(data, letter)
+    # ord_code = ord(letter)
+    size = react(list(data), letter)
 
-    print(letter, size)
+    # print(letter, size)
 
     if size < smallest_len:
         smallest_letter = letter
