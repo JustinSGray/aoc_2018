@@ -1,7 +1,10 @@
 import string
 
+alphabet = string.ascii_lowercase
+
+
 with open('input.txt') as f:
-    data = list(f.read())
+    data = [ord(letter) for letter in f.read()]
 
 
 def react(data, remove=None):
@@ -11,7 +14,8 @@ def react(data, remove=None):
     data = list(data)
 
     if remove is not None:
-        remove = remove.lower()
+        ord_remove_lower = ord(remove.lower())
+        ord_remove_upper = ord(remove.upper())
 
     while i<N_P-1:
 
@@ -19,34 +23,30 @@ def react(data, remove=None):
         p = data[i]
         pp1 = data[i+1]
 
-        if remove is not None and p.lower() == remove:
+        if remove is not None and (p == ord_remove_upper or p == ord_remove_lower):
             data.pop(i)
             N_P -= 1
             if i > 0:
                 i -= 1
             continue
 
-        pm1_lower = pm1.islower()
-        p_lower = p.islower()
-        pp1_lower = pp1.islower()
+        sub = pm1 - p
+        if sub == -32 or sub == 32:
+            data.pop(i-1)
+            data.pop(1)
+            N_P -= 2
+            if i > 0:
+                i -= 1
+            continue
 
-        if pm1_lower != p_lower:
-            if pm1.lower() == p.lower():
-                data.pop(i-1)
-                data.pop(1)
-                N_P -= 2
-                if i > 0:
-                    i -= 1
-                continue
-
-        if p_lower != pp1_lower:
-            if p.lower() == pp1.lower():
-                data.pop(i+1)
-                data.pop(i)
-                N_P -= 2
-                if i > 0:
-                    i -= 1
-                continue
+        sub = p - pp1
+        if sub == -32 or sub == 32:
+            data.pop(i+1)
+            data.pop(i)
+            N_P -= 2
+            if i > 0:
+                i -= 1
+            continue
 
         i += 1
 
@@ -57,9 +57,11 @@ print('part 1')
 size = react(data)
 print(size)
 
+import time
 print('part 2')
-alphabet = string.ascii_lowercase
 
+
+st = time.time()
 smallest_letter = None
 smallest_len = 1e100
 
@@ -74,5 +76,6 @@ for letter in alphabet:
 
 
 print('smallest: {}, {}'.format(smallest_letter, smallest_len))
+print('time ', time.time()-st)
 
 
