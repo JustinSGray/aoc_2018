@@ -1,7 +1,7 @@
-
-import numpy as np
-
 from re import findall
+import numpy as np
+import matplotlib.pylab as plt
+
 
 data = []
 with open('input.txt') as f:
@@ -15,6 +15,8 @@ msg_area = 1e100
 bbox = [0,0]
 
 msg_time = 0
+
+areas = []
 for sec in range(20000):
 
     X = data[:,0] + sec*data[:,2]
@@ -27,10 +29,18 @@ for sec in range(20000):
     min_y = np.min(Y)
     delta_y = abs(max_y-min_y)
 
-    if (delta_x*delta_y) < msg_area:
+    curr_area = delta_x*delta_y
+    if curr_area < msg_area:
         msg_time = sec
         bbox = (delta_y+1, delta_x+1)
-        msg_area = delta_x*delta_y
+        msg_area = curr_area
+
+    # based on a plot of the areas, you can stop when it starts increasing again
+    else:
+        break
+
+    areas.append(curr_area)
+
 
 grid = np.chararray(bbox, unicode=True)
 grid[:] = '-'
@@ -44,3 +54,9 @@ grid[(Y,X)] = '#'
 print('time: ', msg_time)
 for row in grid:
     print(''.join(row))
+
+
+fig, ax = plt.subplots()
+ax.plot(areas)
+# fig.savefig('day10_area_variation.png')
+plt.show()
