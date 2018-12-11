@@ -1,4 +1,8 @@
+import time
+
 import numpy as np
+
+from numba import jit
 
 SIZE = 300
 
@@ -14,7 +18,6 @@ step3 = starting_power + SERIAL_NUMBER
 step4 = step3*rack_id
 step5 = np.floor(step4/100)%10
 power = step5 - 5
-
 
 def find_powers(span=3):
     powers = np.zeros((SIZE,SIZE), dtype='int')
@@ -40,6 +43,8 @@ largest = 0
 largest_loc = (0,0)
 largest_span = 0
 
+st = time.time()
+
 for i in range(1,21):
     mp, mp_loc = find_powers(i)
     if mp > largest:
@@ -51,6 +56,7 @@ for i in range(1,21):
 
 print('largest!!')
 print(largest_loc, largest_span)
+print('time ', time.time()-st)
 
 
 
