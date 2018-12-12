@@ -19,8 +19,9 @@ step4 = step3*rack_id
 step5 = np.floor(step4/100)%10
 power = step5 - 5
 
+
 def find_powers(span=3):
-    powers = np.zeros((SIZE,SIZE), dtype='int')
+    powers = np.zeros((SIZE-span+1,SIZE-span+1), dtype='int')
 
     for i in np.arange(SIZE-span, dtype='int'):
         for j in np.arange(SIZE-span, dtype='int'):
@@ -30,12 +31,30 @@ def find_powers(span=3):
     idx_max = np.argmax(powers)
     max_power = powers.flatten()[idx_max]
     max_x, max_y = np.unravel_index(idx_max, (SIZE,SIZE))
-    return max_power, (max_x+1, max_y+1)
+    return max_power, (max_x+1, max_y+1), powers
+
+
+def find_next_powers(prev_powers, span):
+    '''find the powers for a span 1 larger than the given powers'''
+
+    next_powers = np.zeros((SIZE-span+1,SIZE-span+1), dtype='int')
+
+
+    for i in np.arange(SIZE-span, dtype='int'):
+        for j in np.arange(SIZE-span, dtype='int'):
+            next_powers[i,j] = powers[i,j] + np.sum(power[i:i+span,j+span-1]) + np.sum(power[i+span-1,j:j+span-1])
+
+    idx_max = np.argmax(next_powers)
+    max_power = next_powers.flatten()[idx_max]
+    max_x, max_y = np.unravel_index(idx_max, (SIZE,SIZE))
+
+    return max_power, (max_x+1, max_y+1), next_powers
 
 
 
 print('part 1')
-print(find_powers(3))
+mp, mp_loc, powers = find_powers(3)
+print(mp_loc)
 
 print('part 2')
 
@@ -45,8 +64,11 @@ largest_span = 0
 
 st = time.time()
 
-for i in range(1,21):
-    mp, mp_loc = find_powers(i)
+mp, mp_loc, powers = find_powers(1)
+
+for i in range(2,21):
+
+    mp, mp_loc, powers = find_next_powers(powers, i)
     if mp > largest:
         largest = mp
         largest_loc = mp_loc
