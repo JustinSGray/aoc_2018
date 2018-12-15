@@ -2,6 +2,8 @@ import time
 
 from collections import deque
 
+import numpy as np
+
 class Unit:
     def __init__(self, unit_type, x, y, d):
         self.unit_type = unit_type
@@ -164,17 +166,14 @@ with open("input.txt") as f:
     input_data = f.read()
 data = [list(line) for line in input_data.split("\n")]
 
-
 b = Board(data)
 _, score = b.solve(3, False)
 print("Part 1", score)
 
-check, score = b.solve(19, False)
-print('test', check)
 
-i = 3
+i = 4
 while True:
-    no_elves_died, score = solve(i, True)
+    no_elves_died, score = b.solve(i, True)
     if no_elves_died:
         print("Part 2", score)
         break
