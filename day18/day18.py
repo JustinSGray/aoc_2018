@@ -20,51 +20,21 @@ def print_data(data):
     for row in data:
         print(''.join([data_map[num] for num in row]))
 
-def get_adjacent(i,j, data):
-              # y, x
-    indices = [[],[]]
+def get_adjacent(i,j,data):
 
-    # not on an edge
-    if i > 0 and i < y_max-1 and j>0 and j<x_max-1:
-        # print('test?')
-        idx =  [(i-1,j-1),(i-1,j),(i-1,j+1),
-                 (i,j-1),          (i,j+1),
-                (i+1,j-1),(i+1,j),(i+1,j+1),]
-    elif i == 0: # top edge:
-        if j == 0: # left corner
-            idx = [          (i,j+1),
-                   (i+1,j), (i+1,j+1)]
-        elif j<x_max-1: # middle
-            idx = [(i,j-1),            (i,j+1),
-                   (i+1,j-1), (i+1,j), (i+1,j+1)]
-        else: # right corner
-            idx = [(i,j-1),
-                   (i+1,j-1), (i+1,j)]
-    elif i<y_max-1: # middle
-        if j == 0: # left side
-            idx = [(i-1,j),(i-1,j+1),
-                           (i,j+1),
-                   (i+1,j),(i+1,j+1)]
-        else: #right side
-            idx = [(i-1,j-1),(i-1,j),
-                   (i,j-1),
-                   (i+1,j-1),(i+1,j)]
-    else: # bottom edge
-        if j == 0: # left corner
-            idx = [ (i-1,j), (i-1,j+1),
-                              (i,j+1)]
-        elif j<x_max-1: # middle
-            idx = [(i-1,j-1), (i-1,j), (i-1,j+1),
-                   (i,j-1),            (i,j+1)]
-        else: # right corner
-            idx = [(i-1,j-1), (i-1,j),
-                   (i,j-1)]
+    idx = [(i-1,j-1),(i-1,j),(i-1,j+1),
+           (i,j-1),          (i,j+1),
+           (i+1,j-1),(i+1,j),(i+1,j+1),]
 
     neighbors = []
-    # print(idx)
-    for loc in idx:
-        neighbors.append(data[loc])
-    # print(neighbors)
+    for ni,nj in idx:
+        if ni < 0 or nj < 0:
+            continue
+        try:
+            neighbors.append(data[ni,nj])
+        except IndexError:
+            pass
+
     return neighbors
 
 def minute(data):
@@ -94,8 +64,6 @@ def minute(data):
                     new_data[i,j] = 2
 
     return new_data
-
-
 
 
 for i in range(600):
