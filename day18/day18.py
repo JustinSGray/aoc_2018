@@ -22,20 +22,17 @@ def print_data(data):
 
 def get_adjacent(i,j,data):
 
-    idx = [(i-1,j-1),(i-1,j),(i-1,j+1),
+    idx = ((i-1,j-1),(i-1,j),(i-1,j+1),
            (i,j-1),          (i,j+1),
-           (i+1,j-1),(i+1,j),(i+1,j+1),]
+           (i+1,j-1),(i+1,j),(i+1,j+1),)
 
-    neighbors = []
     for ni,nj in idx:
         if ni < 0 or nj < 0:
             continue
         try:
-            neighbors.append(data[ni,nj])
+            yield(data[ni,nj])
         except IndexError:
             pass
-
-    return neighbors
 
 def minute(data):
 
@@ -47,21 +44,39 @@ def minute(data):
             neighbors = get_adjacent(i,j, data)
 
             if current == 0: # open
-                if len([n for n in neighbors if n==1]) >= 3:
-                    new_data[i,j] = 1
+                n_trees = 0
+                for n in neighbors:
+                    if n==1:
+                        n_trees += 1
+                    if n_trees == 3:
+                        new_data[i,j] = 1
+                        break
 
             elif current == 1: # trees
-                if len([n for n in neighbors if n==2]) >= 3:
+                n_lumber = 0
+                for n in neighbors:
+                    if n==2:
+                        n_lumber+=1
+                    if n_lumber == 3:
                         new_data[i,j] = 2
+                        break
 
             elif current == 2: # lumber yard
 
                 new_data[i,j] = 0
-                check_lumber_yard = len([n for n in neighbors if n==2]) >= 1
-                check_trees       = len([n for n in neighbors if n==1]) >= 1
+                # check_lumber_yard = len([n for n in neighbors if n==2]) >= 1
+                # check_trees       = len([n for n in neighbors if n==1]) >= 1
 
-                if check_lumber_yard and check_trees:
-                    new_data[i,j] = 2
+                check_lumber_yard = check_trees = False
+
+                for n in neighbors:
+                    if n==2:
+                        check_lumber_yard = True
+                    if n==1:
+                        check_trees = True
+                    if check_trees and check_lumber_yard:
+                        new_data[i,j] = 2
+                        break
 
     return new_data
 
